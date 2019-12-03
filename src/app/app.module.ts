@@ -6,6 +6,7 @@ import { EntityComponent } from './entity/entity.component';
 import { WindowComponent } from './window/window.component';
 import { ControlledEntityComponent } from './controlled-entity/controlled-entity.component';
 import { MazeComponent } from './maze/maze.component';
+import { StaticEntityComponent } from './static-entity/static-entity.component';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { MazeComponent } from './maze/maze.component';
     EntityComponent,
     WindowComponent,
     ControlledEntityComponent,
-    MazeComponent
+    MazeComponent,
+    StaticEntityComponent
   ],
   imports: [
     BrowserModule

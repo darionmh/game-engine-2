@@ -1,8 +1,11 @@
 import { Collidable } from './Collidable';
+import { Vector2 } from './Vector2';
 
 export interface CollisionEvent {
     sides: Side[],
-    collidedWith: Collidable
+    collidable: Collidable,
+    collidedWith: Collidable,
+    collisionVector: Vector2,
 }
 
 export enum Side {

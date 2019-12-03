@@ -12,21 +12,23 @@ export class CollisionService {
 
   constructor() { }
 
-  public checkForCollision(collidable: Collidable): boolean {
+  public checkForCollision(collidable: Collidable, exclude: Collidable = null): boolean {
     const square = collidable.getSquare();
 
     const sides = [];
     for(const other of this.collidables){
-      if(other === collidable){
+      if(other === collidable || other === exclude){
         continue;
       }
 
       const otherSquare = other.getSquare();
-      sides.push(...square.touchesV2(otherSquare));
-      console.log(sides)
-      if(sides.length > 0){
-        console.log("boop")
-        collidable.onCollision({sides, collidedWith: other});
+      const currSides = square.touchesV2(otherSquare)
+      // console.log(sides)
+      if(currSides.length > 0){
+        // console.log("boop")
+        sides.push(...square.touchesV2(otherSquare));
+        collidable.onCollision({sides, collidable, collidedWith: other, collisionVector: collidable.getVelocityVector()});
+        other.onCollision({sides, collidable, collidedWith: other, collisionVector: collidable.getVelocityVector()});
       }
     }
 
