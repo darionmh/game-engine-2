@@ -18,7 +18,8 @@ import { MazeComponent } from './maze/maze.component';
   imports: [
     BrowserModule
   ],
-  providers: [EntityComponent],
-  bootstrap: [AppComponent]
+  providers: [],
+  bootstrap: [AppComponent],
+  entryComponents: [EntityComponent]
 })
 export class AppModule { }
