@@ -5,18 +5,20 @@ import { AppComponent } from './app.component';
 import { EntityComponent } from './entity/entity.component';
 import { WindowComponent } from './window/window.component';
 import { ControlledEntityComponent } from './controlled-entity/controlled-entity.component';
+import { MazeComponent } from './maze/maze.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EntityComponent,
     WindowComponent,
-    ControlledEntityComponent
+    ControlledEntityComponent,
+    MazeComponent
   ],
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [EntityComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

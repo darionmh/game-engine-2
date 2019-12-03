@@ -1,12 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Vector2 } from '../model/Vector2';
+import { Collidable } from '../model/Collidable';
+import { Square } from '../model/Square';
+import { CollisionService } from '../services/collision.service';
+import { CollisionEvent } from '../model/CollisionEvent';
 
 @Component({
   selector: 'app-entity',
   templateUrl: './entity.component.html',
   styleUrls: ['./entity.component.scss']
 })
-export class EntityComponent implements OnInit {
+export class EntityComponent implements OnInit, Collidable {
 
   protected position: Vector2;
   protected velocity: Vector2;
@@ -25,9 +29,10 @@ export class EntityComponent implements OnInit {
   public widthStyle: string;
   public heightStyle: string;
 
-  constructor() { 
+  constructor(protected collisionService: CollisionService) { 
     this.draw = this.draw.bind(this)
     this.adjustPosition = this.adjustPosition.bind(this)
+    collisionService.subscribe(this);
   }
 
   ngOnInit() {
@@ -54,5 +59,13 @@ export class EntityComponent implements OnInit {
 
   adjustPosition(){
     this.position = Vector2.ClampVector(Vector2.AddVectors(this.position, this.velocity), this.windowWidth - this.width, this.windowHeight - this.height);
+  }
+
+  onCollision(event: CollisionEvent){
+    //default no op
+  }
+
+  getSquare(): Square{
+    return new Square(this.position, this.width, this.height);
   }
 }
