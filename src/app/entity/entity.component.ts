@@ -3,7 +3,7 @@ import { Vector2 } from '../model/Vector2';
 import { Collidable } from '../model/Collidable';
 import { Square } from '../model/Square';
 import { CollisionService } from '../services/collision.service';
-import { CollisionEvent, Side } from '../model/CollisionEvent';
+import { CollisionEvent, Side, CollisionEvent2 } from '../model/CollisionEvent';
 
 @Component({
   selector: 'app-entity',
@@ -82,6 +82,10 @@ export class EntityComponent implements OnInit, Collidable {
       this.renderTimeout = null;
       callback();
     }, this.speed)
+  }
+
+  onCollision2(event: CollisionEvent2){
+    
   }
 
   onCollision(event: CollisionEvent){

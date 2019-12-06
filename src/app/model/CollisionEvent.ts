@@ -8,6 +8,15 @@ export interface CollisionEvent {
     collisionVector: Vector2,
 }
 
+export interface CollisionEvent2 {
+    collisions: Collision[]
+}
+
+export interface Collision {
+    side: Side,
+    collidedWith: Collidable
+}
+
 export enum Side {
     TOP, LEFT, BOTTOM, RIGHT
 }
