@@ -3,7 +3,7 @@ import { Vector2 } from '../model/Vector2';
 import { Collidable } from '../model/Collidable';
 import { Square } from '../model/Square';
 import { CollisionService } from '../services/collision.service';
-import { CollisionEvent, Side, CollisionEvent2, Collision } from '../model/CollisionEvent';
+import { CollisionEvent, Side, CollisionEvent2, Collision, invertSide } from '../model/CollisionEvent';
 
 @Component({
   selector: 'app-entity',
@@ -109,7 +109,7 @@ export class EntityComponent implements OnInit, Collidable {
     } else {
       console.log("move")
       const velocity = collision.collidedWith.getVelocityVector().restrictToSide(collision.side);
-      this.collisionService.checkForCollision2(this, collision.collidedWith)
+      this.collisionService.checkForCollision(this, [invertSide(collision.side)], collision.collidedWith)
       this.move(velocity.x, velocity.y, () => this.draw());
     }
   }

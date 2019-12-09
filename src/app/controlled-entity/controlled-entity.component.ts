@@ -72,7 +72,22 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
       let x = this.heldKeys[KEYS.A] && !this.heldKeys[KEYS.D] ? -1 : this.heldKeys[KEYS.D] && !this.heldKeys[KEYS.A] ? 1 : 0
       let y = this.heldKeys[KEYS.W] && !this.heldKeys[KEYS.S] ? -1 : this.heldKeys[KEYS.S] && !this.heldKeys[KEYS.W] ? 1 : 0
 
-      this.collisionService.checkForCollision2(this)
+      const sides: Side[] = [];
+      
+      if(x > 0){
+        sides.push(Side.RIGHT);
+      }
+      if(x < 0){
+        sides.push(Side.LEFT);
+      }
+      if(y > 0){
+        sides.push(Side.BOTTOM);
+      }
+      if(y < 0){
+        sides.push(Side.TOP);
+      }
+
+      this.collisionService.checkForCollision(this, sides);
       
       this.move(x, y, this.handleMove);
     }

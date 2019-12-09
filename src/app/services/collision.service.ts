@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Collidable } from '../model/Collidable';
 import { Square } from '../model/Square';
 import { Vector2Clamp } from '../model/Vector2Clamp';
-import { CollisionEvent2, Collision } from '../model/CollisionEvent';
+import { CollisionEvent2, Collision, Side } from '../model/CollisionEvent';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class CollisionService {
 
   constructor() { }
 
-  public checkForCollision2(curr: Collidable, exclude: Collidable = null): boolean {
+  public checkForCollision(curr: Collidable, sides: Side[], exclude: Collidable = null): boolean {
     const currSquare = curr.getSquare();
     let collisionCount = 0;
 
@@ -22,19 +22,19 @@ export class CollisionService {
         continue;
       }
       const otherSquare = other.getSquare();
-      const side = currSquare.touchesV2(otherSquare);
+      const touchingSide: Side = currSquare.touchesV2(otherSquare);
       const isColliding = curr.isColliding(other);
 
-      if(side !== null){
+      if(touchingSide !== null && sides.includes(touchingSide)){
         console.log('collided')
-        other.onCollision({side, collidedWith: curr})
+        other.onCollision({side: touchingSide, collidedWith: curr})
       }
 
-      if (side !== null && !isColliding) {
-        curr.beginCollision({ side, collidedWith: other })
+      if (touchingSide !== null && sides.includes(touchingSide) && !isColliding) {
+        curr.beginCollision({ side: touchingSide, collidedWith: other })
         // other.beginCollision({ side, collidedWith: curr })
         collisionCount++;
-      } else if (side === null && isColliding) {
+      } else if (touchingSide === null && isColliding) {
         curr.endCollision(other)
       }
     }
