@@ -4,6 +4,7 @@ import { Collidable } from '../model/Collidable';
 import { Square } from '../model/Square';
 import { CollisionService } from '../services/collision.service';
 import { CollisionEvent, Side, CollisionEvent2, Collision, invertSide } from '../model/CollisionEvent';
+import { debug } from 'util';
 
 @Component({
   selector: 'app-entity',
@@ -69,7 +70,7 @@ export class EntityComponent implements OnInit, Collidable {
   }
 
   move(x: number, y: number, callback: () => void) {
-    const blockedSides = this.activeCollisions.map(it => it.side);
+    const blockedSides = this.activeCollisions.map(it => it.collidedWith.isStatic ? it.side : "");
     console.log("blocked sides", blockedSides);
     if (blockedSides.includes(Side.TOP) && y < 0) y = 0;
     if (blockedSides.includes(Side.BOTTOM) && y > 0) y = 0;
@@ -79,6 +80,7 @@ export class EntityComponent implements OnInit, Collidable {
     this.adjustVelocity(x, y);
     this.adjustPosition();
 
+    this.draw();
     this.renderTimeout = setTimeout(() => {
       this.renderTimeout = null;
       callback();
@@ -108,6 +110,7 @@ export class EntityComponent implements OnInit, Collidable {
       //no op
     } else {
       console.log("move")
+      debugger
       const velocity = collision.collidedWith.getVelocityVector().restrictToSide(collision.side);
       this.collisionService.checkForCollision(this, [invertSide(collision.side)], collision.collidedWith)
       this.move(velocity.x, velocity.y, () => this.draw());

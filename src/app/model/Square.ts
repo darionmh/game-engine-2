@@ -50,6 +50,7 @@ export class Square {
     } 
 
     touchesV2(other: Square): Side {
+
         if(this.position.x === other.position.x + other.width){
             const otherYRange = new Range(other.position.y, other.position.y + other.height);
             if(otherYRange.containsEither(this.position.y, this.position.y + this.height) && !(this.position.y === other.position.y + other.height) && !(this.position.y + this.height === other.position.y)){
@@ -78,6 +79,6 @@ export class Square {
             }
         }
 
-        return null;
+        return null
     }
 }

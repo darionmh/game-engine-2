@@ -24,7 +24,6 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
   constructor(protected collisionService: CollisionService) { 
     super(collisionService);
 
-    this.render = this.render.bind(this)
     this.move = this.move.bind(this)
     this.handleMove = this.handleMove.bind(this);
   }
@@ -41,7 +40,6 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
       if(this.keyCount === 1){
         console.log("start render")
         this.handleMove();
-        this.render();
       }
     }
   }
@@ -73,7 +71,7 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
       let y = this.heldKeys[KEYS.W] && !this.heldKeys[KEYS.S] ? -1 : this.heldKeys[KEYS.S] && !this.heldKeys[KEYS.W] ? 1 : 0
 
       const sides: Side[] = [];
-      
+
       if(x > 0){
         sides.push(Side.RIGHT);
       }
@@ -90,14 +88,7 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
       this.collisionService.checkForCollision(this, sides);
       
       this.move(x, y, this.handleMove);
-    }
-  }
-
-  render(){
-    console.log("render");
-    if(this.keyCount){
       this.draw();
-      window.requestAnimationFrame(this.render);
     }
   }
 }

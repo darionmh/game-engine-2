@@ -14,6 +14,7 @@ export class CollisionService {
   constructor() { }
 
   public checkForCollision(curr: Collidable, sides: Side[], exclude: Collidable = null): boolean {
+    console.log("Checking", curr)
     const currSquare = curr.getSquare();
     let collisionCount = 0;
 
