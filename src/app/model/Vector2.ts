@@ -1,4 +1,5 @@
 import { Range } from './Range';
+import { Side } from './CollisionEvent';
 
 export class Vector2 {
     public x: number;
@@ -25,5 +26,22 @@ export class Vector2 {
         const y = Math.min(Math.max(yRange.min, a.y), yRange.max)
 
         return new Vector2(x, y);
+    }
+
+    restrictToSide(side: Side): Vector2{
+        if(side === Side.BOTTOM && this.y > 0){
+            return new Vector2(0, this.y);
+        }
+        if(side === Side.TOP && this.y < 0){
+            return new Vector2(0, this.y);
+        }
+        if(side === Side.RIGHT && this.x > 0){
+            return new Vector2(this.x, 0);
+        }
+        if(side === Side.LEFT && this.x < 0){
+            return new Vector2(this.x, 0);
+        }
+
+        return new Vector2(0,0);
     }
 }

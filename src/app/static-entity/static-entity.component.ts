@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EntityComponent } from '../entity/entity.component';
 import { CollisionService } from '../services/collision.service';
-import { CollisionEvent } from '../model/CollisionEvent';
+import { CollisionEvent, Collision } from '../model/CollisionEvent';
 
 @Component({
   selector: 'app-static-entity',
@@ -19,9 +19,4 @@ export class StaticEntityComponent extends EntityComponent implements OnInit {
   ngOnInit() {
     super.ngOnInit();
   }
-
-  onCollision(event: CollisionEvent){
-    //default no op
-  }
-
 }

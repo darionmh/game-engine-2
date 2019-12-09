@@ -72,9 +72,7 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
       let x = this.heldKeys[KEYS.A] && !this.heldKeys[KEYS.D] ? -1 : this.heldKeys[KEYS.D] && !this.heldKeys[KEYS.A] ? 1 : 0
       let y = this.heldKeys[KEYS.W] && !this.heldKeys[KEYS.S] ? -1 : this.heldKeys[KEYS.S] && !this.heldKeys[KEYS.W] ? 1 : 0
 
-      if(!this.collisionService.checkForCollision(this)){
-        this.blockedSides = [];
-      }
+      this.collisionService.checkForCollision2(this)
       
       this.move(x, y, this.handleMove);
     }
