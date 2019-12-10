@@ -5,6 +5,7 @@ import { Square } from '../model/Square';
 import { CollisionService } from '../services/collision.service';
 import { CollisionEvent, Side, CollisionEvent2, Collision, invertSide } from '../model/CollisionEvent';
 import { debug } from 'util';
+import uuidv1 from 'uuid/v1';
 
 @Component({
   selector: 'app-entity',
@@ -12,7 +13,7 @@ import { debug } from 'util';
   styleUrls: ['./entity.component.scss']
 })
 export class EntityComponent implements OnInit, Collidable {
-
+  id = uuidv1();
   isStatic: boolean = false;
 
   public position: Vector2;
@@ -40,7 +41,6 @@ export class EntityComponent implements OnInit, Collidable {
   constructor(protected collisionService: CollisionService) {
     this.draw = this.draw.bind(this)
     this.adjustPosition = this.adjustPosition.bind(this)
-    collisionService.subscribe(this);
     this.move = this.move.bind(this);
   }
 
@@ -51,6 +51,8 @@ export class EntityComponent implements OnInit, Collidable {
 
     this.width = 50;
     this.height = 50;
+
+    this.collisionService.subscribe(this);
 
     this.draw();
   }
@@ -80,8 +82,11 @@ export class EntityComponent implements OnInit, Collidable {
     if (blockedSides.includes(Side.LEFT) && x < 0) x = 0;
     if (blockedSides.includes(Side.RIGHT) && x > 0) x = 0;
 
+    const oldPosition = this.position;
+
     this.adjustVelocity(x, y);
     this.adjustPosition();
+    this.collisionService.updateLocation(this, oldPosition);
 
     this.draw();
     this.renderTimeout = setTimeout(() => {
@@ -155,5 +160,9 @@ export class EntityComponent implements OnInit, Collidable {
     })
 
     return blockedSides;
+  }
+
+  getPosition(): Vector2 {
+    return this.position;
   }
 }

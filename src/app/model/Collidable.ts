@@ -4,6 +4,7 @@ import { Vector2 } from './Vector2';
 import { EntityComponent } from '../entity/entity.component';
 
 export interface Collidable {
+    id: string;
     isStatic: boolean;
     activeCollisions: Collision[];
 
@@ -15,4 +16,5 @@ export interface Collidable {
     getVelocityVector(): Vector2;
     getEntity(): EntityComponent;
     getBlockedSides(sides: Side[]): Side[];
+    getPosition(): Vector2;
 }

@@ -87,7 +87,9 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
 
       this.tempVelocity = new Vector2(x, y);
 
-      this.collisionService.checkForCollision(this, sides);
+      if(!this.collisionService.checkForCollision(this, sides)){
+        this.activeCollisions = [];
+      };
       
       this.move(x, y, this.handleMove);
       this.draw();
