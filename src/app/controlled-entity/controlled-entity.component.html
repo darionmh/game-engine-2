@@ -1,4 +1,4 @@
-<div class="entity" [style.top]="topStyle" [style.left]="leftStyle" [style.width]="widthStyle" [style.height]="heightStyle">
+<div class="entity" [style.top]="topStyle" [style.left]="leftStyle" [style.width]="widthStyle" [style.height]="heightStyle" (click)="handleClick()">
     {{position.x}}, {{position.y}}<br/>
     h x w: {{height}} x {{width}}
 </div>

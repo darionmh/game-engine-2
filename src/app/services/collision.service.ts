@@ -3,6 +3,7 @@ import { Collidable } from '../model/Collidable';
 import { Square } from '../model/Square';
 import { Vector2Clamp } from '../model/Vector2Clamp';
 import { CollisionEvent2, Collision, Side } from '../model/CollisionEvent';
+import { Range } from '../model/Range';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,14 @@ export class CollisionService {
     }
 
     return collisionCount > 0;
+  }
+
+  private findNearbyCollidables(xRange: Range, yRange: Range): Collidable[]{
+    const nearby = [];
+
+    
+
+    return nearby;
   }
 
   public subscribe(collidable: Collidable): () => void {

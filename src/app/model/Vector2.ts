@@ -28,6 +28,23 @@ export class Vector2 {
         return new Vector2(x, y);
     }
 
+    toSides(): Side[]{
+        const sides = []
+        if(this.x > 0){
+            sides.push(Side.RIGHT);
+        }
+        if(this.x < 0){
+            sides.push(Side.LEFT);
+        }
+        if(this.y > 0){
+            sides.push(Side.BOTTOM);
+        }
+        if(this.y < 0){
+            sides.push(Side.TOP);
+        }
+        return sides;
+    }
+
     restrictToSide(side: Side): Vector2{
         if(side === Side.BOTTOM && this.y > 0){
             return new Vector2(0, this.y);

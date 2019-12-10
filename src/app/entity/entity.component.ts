@@ -17,6 +17,7 @@ export class EntityComponent implements OnInit, Collidable {
 
   public position: Vector2;
   protected velocity: Vector2;
+  protected tempVelocity: Vector2;
 
   @Input() windowWidth: number = 700;
   @Input() windowHeight: number = 700;
@@ -32,7 +33,7 @@ export class EntityComponent implements OnInit, Collidable {
   public widthStyle: string;
   public heightStyle: string;
 
-  protected activeCollisions: Collision[] = [];
+  public activeCollisions: Collision[] = [];
   protected renderTimeout = null;
   private speed = 1;
 
@@ -46,6 +47,7 @@ export class EntityComponent implements OnInit, Collidable {
   ngOnInit() {
     this.position = new Vector2(this.x, this.y);
     this.velocity = new Vector2(0, 0);
+    this.tempVelocity = new Vector2(0, 0);
 
     this.width = 50;
     this.height = 50;
@@ -70,8 +72,9 @@ export class EntityComponent implements OnInit, Collidable {
   }
 
   move(x: number, y: number, callback: () => void) {
-    const blockedSides = this.activeCollisions.map(it => it.collidedWith.isStatic ? it.side : "");
-    console.log("blocked sides", blockedSides);
+    let blockedSides = this.getBlockedSides(new Vector2(x,y).toSides());
+
+    console.log("blocked sides", blockedSides, x, y);
     if (blockedSides.includes(Side.TOP) && y < 0) y = 0;
     if (blockedSides.includes(Side.BOTTOM) && y > 0) y = 0;
     if (blockedSides.includes(Side.LEFT) && x < 0) x = 0;
@@ -109,8 +112,7 @@ export class EntityComponent implements OnInit, Collidable {
     if (this.isStatic) {
       //no op
     } else {
-      console.log("move")
-      debugger
+      console.log("move", collision.side)
       const velocity = collision.collidedWith.getVelocityVector().restrictToSide(collision.side);
       this.collisionService.checkForCollision(this, [invertSide(collision.side)], collision.collidedWith)
       this.move(velocity.x, velocity.y, () => this.draw());
@@ -122,10 +124,36 @@ export class EntityComponent implements OnInit, Collidable {
   }
 
   getVelocityVector(): Vector2 {
-    return this.velocity;
+    return this.tempVelocity;
   }
 
   getEntity(): EntityComponent {
     return this;
+  }
+
+  getBlockedSides(activeSides: Side[]): Side[] {
+    let blockedSides = [];
+    if (this.position.x <= 0) {
+      blockedSides.push(Side.LEFT);
+    }
+    if (this.position.x >= this.windowWidth - this.width) {
+      blockedSides.push(Side.RIGHT);
+    }
+    if (this.position.y <= 0) {
+      blockedSides.push(Side.TOP);
+    }
+    if (this.position.y >= this.windowHeight - this.height) {
+      blockedSides.push(Side.BOTTOM);
+    }
+    this.activeCollisions.forEach(it => {
+      console.log("active collision", it, activeSides);
+      if (activeSides.includes(it.side)) {
+        if(it.collidedWith.isStatic)
+          blockedSides.push(it.side)
+        blockedSides.push(...it.collidedWith.getBlockedSides(activeSides));
+      }
+    })
+
+    return blockedSides;
   }
 }

@@ -85,11 +85,17 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
         sides.push(Side.TOP);
       }
 
+      this.tempVelocity = new Vector2(x, y);
+
       this.collisionService.checkForCollision(this, sides);
       
       this.move(x, y, this.handleMove);
       this.draw();
     }
+  }
+
+  handleClick(){
+    console.log(this)
   }
 }
 

@@ -1,8 +1,8 @@
 import { Vector2 } from './Vector2';
 import { Range } from './Range';
 import { Vector2Clamp } from './Vector2Clamp';
-import { Side } from './CollisionEvent';
 import { range } from 'rxjs';
+import { Side } from './CollisionEvent';
 
 export class Square {
     public position: Vector2;
@@ -50,6 +50,7 @@ export class Square {
     } 
 
     touchesV2(other: Square): Side {
+        console.log(this, other);
 
         if(this.position.x === other.position.x + other.width){
             const otherYRange = new Range(other.position.y, other.position.y + other.height);

@@ -1,10 +1,11 @@
 import { Square } from './Square';
-import { CollisionEvent, CollisionEvent2, Collision } from './CollisionEvent';
+import { CollisionEvent, CollisionEvent2, Collision, Side } from './CollisionEvent';
 import { Vector2 } from './Vector2';
 import { EntityComponent } from '../entity/entity.component';
 
 export interface Collidable {
     isStatic: boolean;
+    activeCollisions: Collision[];
 
     onCollision(collision: Collision): void;
     beginCollision(collision: Collision): void;
@@ -13,4 +14,5 @@ export interface Collidable {
     getSquare(): Square;
     getVelocityVector(): Vector2;
     getEntity(): EntityComponent;
+    getBlockedSides(sides: Side[]): Side[];
 }

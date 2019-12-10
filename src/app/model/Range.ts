@@ -25,4 +25,8 @@ export class Range {
     containsEither(a: number, b: number): boolean {
         return this.containsV2(a) || this.containsV2(b);
     }
+
+    overlaps(other: Range){
+        return this.containsEither(other.min, other.max) || other.containsEither(this.min, this.max);
+    }
 }
