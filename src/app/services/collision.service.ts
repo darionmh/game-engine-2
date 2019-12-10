@@ -37,22 +37,25 @@ export class CollisionService {
     let collisionCount = 0;
 
     const surroundingChunks = this.getSurroundingChunks(curr.getPosition());
-
+    console.log("surrounding", surroundingChunks)
+    const stagedCollisions = [];
     for (const other of surroundingChunks) {
+      console.log('looing at ', other)
       if (other === null || other === curr || other === exclude) {
         continue;
       }
       const otherSquare = other.getSquare();
-      const touchingSide: Side = currSquare.touchesV2(otherSquare);
+      const touchingSide: Side = currSquare.touches(otherSquare);
       const isColliding = curr.isColliding(other);
 
       if (touchingSide !== null && sides.includes(touchingSide)) {
-        console.log('collided')
-        other.onCollision({ side: touchingSide, collidedWith: curr })
+        console.log('collided', other)
+        stagedCollisions.push(() => other.onCollision({ side: touchingSide, collidedWith: curr }))
         collisionCount++;
       }
 
       if (touchingSide !== null && sides.includes(touchingSide) && !isColliding) {
+        console.log('collided', other)
         curr.beginCollision({ side: touchingSide, collidedWith: other })
         // other.beginCollision({ side, collidedWith: curr })
         collisionCount++;
@@ -60,6 +63,7 @@ export class CollisionService {
         curr.endCollision(other)
       }
     }
+    stagedCollisions.forEach(it => it())
 
     return collisionCount > 0;
   }

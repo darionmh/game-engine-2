@@ -26,8 +26,8 @@ export class EntityComponent implements OnInit, Collidable {
   @Input() x: number = 0;
   @Input() y: number = 0;
 
-  protected width: number;
-  protected height: number;
+  @Input() width: number = 50;
+  @Input() height: number = 50;
 
   public topStyle: string;
   public leftStyle: string;
@@ -48,9 +48,6 @@ export class EntityComponent implements OnInit, Collidable {
     this.position = new Vector2(this.x, this.y);
     this.velocity = new Vector2(0, 0);
     this.tempVelocity = new Vector2(0, 0);
-
-    this.width = 50;
-    this.height = 50;
 
     this.collisionService.subscribe(this);
 
@@ -76,7 +73,6 @@ export class EntityComponent implements OnInit, Collidable {
   move(x: number, y: number, callback: () => void) {
     let blockedSides = this.getBlockedSides(new Vector2(x,y).toSides());
 
-    console.log("blocked sides", blockedSides, x, y);
     if (blockedSides.includes(Side.TOP) && y < 0) y = 0;
     if (blockedSides.includes(Side.BOTTOM) && y > 0) y = 0;
     if (blockedSides.includes(Side.LEFT) && x < 0) x = 0;
@@ -117,9 +113,12 @@ export class EntityComponent implements OnInit, Collidable {
     if (this.isStatic) {
       //no op
     } else {
-      console.log("move", collision.side)
-      const velocity = collision.collidedWith.getVelocityVector().restrictToSide(collision.side);
-      this.collisionService.checkForCollision(this, [invertSide(collision.side)], collision.collidedWith)
+      console.log('collision')
+      const velocity = collision.collidedWith.getVelocityVector().restrictToSide(collision.side).blockSides(collision.collidedWith.getBlockedSides([collision.side]));
+      this.tempVelocity = velocity;
+      if(!this.collisionService.checkForCollision(this, [collision.side], collision.collidedWith)){
+        this.activeCollisions = [];
+      }
       this.move(velocity.x, velocity.y, () => this.draw());
     }
   }
@@ -151,7 +150,6 @@ export class EntityComponent implements OnInit, Collidable {
       blockedSides.push(Side.BOTTOM);
     }
     this.activeCollisions.forEach(it => {
-      console.log("active collision", it, activeSides);
       if (activeSides.includes(it.side)) {
         if(it.collidedWith.isStatic)
           blockedSides.push(it.side)

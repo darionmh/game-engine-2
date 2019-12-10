@@ -61,4 +61,20 @@ export class Vector2 {
 
         return new Vector2(0,0);
     }
+
+    blockSides(sides: Side[]){
+        if(sides.includes(Side.LEFT) && this.x < 0){
+            this.x = 0;
+        }
+        if(sides.includes(Side.RIGHT) && this.x > 0){
+            this.x = 0;
+        }
+        if(sides.includes(Side.TOP) && this.y < 0){
+            this.y = 0;
+        }
+        if(sides.includes(Side.BOTTOM) && this.y > 0){
+            this.y = 0;
+        }
+        return this;
+    }
 }
