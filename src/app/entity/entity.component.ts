@@ -6,6 +6,7 @@ import { CollisionService } from '../services/collision.service';
 import { CollisionEvent, Side, CollisionEvent2, Collision, invertSide } from '../model/CollisionEvent';
 import { debug } from 'util';
 import uuidv1 from 'uuid/v1';
+import { OptionsService } from '../services/options.service';
 
 @Component({
   selector: 'app-entity',
@@ -20,8 +21,8 @@ export class EntityComponent implements OnInit, Collidable {
   protected velocity: Vector2;
   protected tempVelocity: Vector2;
 
-  @Input() windowWidth: number = 700;
-  @Input() windowHeight: number = 700;
+  private windowWidth;
+  private windowHeight;
 
   @Input() x: number = 0;
   @Input() y: number = 0;
@@ -38,7 +39,10 @@ export class EntityComponent implements OnInit, Collidable {
   protected renderTimeout = null;
   private speed = 1;
 
-  constructor(protected collisionService: CollisionService) {
+  constructor(protected collisionService: CollisionService, protected optionsService: OptionsService) {
+    this.windowWidth = optionsService.windowWidth;
+    this.windowHeight = optionsService.windowHeight;
+
     this.draw = this.draw.bind(this)
     this.adjustPosition = this.adjustPosition.bind(this)
     this.move = this.move.bind(this);

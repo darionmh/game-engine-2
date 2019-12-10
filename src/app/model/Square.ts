@@ -17,29 +17,33 @@ export class Square {
 
     touches(other: Square): Side {
         if(this.position.x === other.position.x + other.width){
+            const thisYRange = new Range(this.position.y, this.position.y + this.height);
             const otherYRange = new Range(other.position.y, other.position.y + other.height);
-            if(otherYRange.containsEither(this.position.y, this.position.y + this.height) && !(this.position.y === other.position.y + other.height) && !(this.position.y + this.height === other.position.y)){
+            if((otherYRange.containsEither(this.position.y, this.position.y + this.height) || thisYRange.containsEither(other.position.y, other.position.y + other.height)) && !(this.position.y === other.position.y + other.height) && !(this.position.y + this.height === other.position.y)){
                 return Side.LEFT
             }
         }
 
         if(this.position.x + this.width === other.position.x){
+            const thisYRange = new Range(this.position.y, this.position.y + this.height);
             const otherYRange = new Range(other.position.y, other.position.y + other.height);
-            if(otherYRange.containsEither(this.position.y, this.position.y + this.height) && !(this.position.y === other.position.y + other.height) && !(this.position.y + this.height === other.position.y)){
+            if((otherYRange.containsEither(this.position.y, this.position.y + this.height) || thisYRange.containsEither(other.position.y, other.position.y + other.height)) && !(this.position.y === other.position.y + other.height) && !(this.position.y + this.height === other.position.y)){
                 return Side.RIGHT
             }
         }
 
         if(this.position.y === other.position.y + other.height){
+            const thisXRange = new Range(this.position.x, this.position.x + this.width);
             const otherXRange = new Range(other.position.x, other.position.x + other.width);
-            if(otherXRange.containsEither(this.position.x, this.position.x + this.width) && !(this.position.x === other.position.x + other.width) && !(this.position.x + this.width === other.position.x)){
+            if((otherXRange.containsEither(this.position.x, this.position.x + this.width) || thisXRange.containsEither(other.position.x, other.position.x + other.width)) && !(this.position.x === other.position.x + other.width) && !(this.position.x + this.width === other.position.x)){
                 return Side.TOP
             }
         }
 
         if(this.position.y + this.height === other.position.y){
+            const thisXRange = new Range(this.position.x, this.position.x + this.width);
             const otherXRange = new Range(other.position.x, other.position.x + other.width);
-            if(otherXRange.containsEither(this.position.x, this.position.x + this.width) && !(this.position.x === other.position.x + other.width) && !(this.position.x + this.width === other.position.x)){
+            if((otherXRange.containsEither(this.position.x, this.position.x + this.width) || thisXRange.containsEither(other.position.x, other.position.x + other.width)) && !(this.position.x === other.position.x + other.width) && !(this.position.x + this.width === other.position.x)){
                 return Side.BOTTOM;
             }
         }

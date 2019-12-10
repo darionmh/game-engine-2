@@ -5,6 +5,7 @@ import { Vector2Clamp } from '../model/Vector2Clamp';
 import { CollisionEvent2, Collision, Side } from '../model/CollisionEvent';
 import { Range } from '../model/Range';
 import { Vector2 } from '../model/Vector2';
+import { OptionsService } from './options.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +14,23 @@ export class CollisionService {
 
   private collidables = {};
 
-  private width = 700;
-  private height = 700;
-  private chunkSize = 50;
+  private width;
+  private height;
+  private chunkSize;
 
-  private collidableChunks: Collidable[][][] = [];
+  private collidableChunks: Chunk[][] = [];
 
-  constructor() {
+  constructor(private optionsService: OptionsService) {
+    this.width = optionsService.windowWidth;
+    this.height = optionsService.windowHeight;
+    this.chunkSize = optionsService.chunkSize;
+
     let yChunks = Math.ceil(this.height / this.chunkSize);
     let xChunks = Math.ceil(this.width / this.chunkSize);
     for (let y = 0; y < yChunks; y++) {
       let row = [];
       for (let x = 0; x < xChunks; x++) {
-        row.push([])
+        row.push(new Chunk())
       }
       this.collidableChunks.push(row);
     }
@@ -36,7 +41,7 @@ export class CollisionService {
     const currSquare = curr.getSquare();
     let collisionCount = 0;
 
-    const surroundingChunks = this.getSurroundingChunks(curr.getPosition());
+    const surroundingChunks = this.getSurroundingCollidables(curr.getPosition(), curr.getSquare().height, curr.getSquare().width);
     console.log("surrounding", surroundingChunks)
     const stagedCollisions = [];
     for (const other of surroundingChunks) {
@@ -71,55 +76,64 @@ export class CollisionService {
   public subscribe(collidable: Collidable): () => void {
     this.collidables[collidable.id] = collidable;
     console.log(collidable)
-    this.getChunk(collidable.getPosition()).push(collidable);
+    // this.getChunk(collidable.getPosition()).collidables.push(collidable);
+
+    this.getChunks(collidable.getPosition(), collidable.getSquare().height, collidable.getSquare().width).forEach(it => it.collidables.push(collidable));
 
     return () => this.unsubscribe(collidable);
   }
 
   public updateLocation(collidable: Collidable, oldPosition: Vector2) {
     this.removeFromChunk(collidable, oldPosition);
-    this.getChunk(collidable.getPosition()).push(collidable);
+    this.getChunks(collidable.getPosition(), collidable.getSquare().height, collidable.getSquare().width).forEach(it => it.collidables.push(collidable));
   }
 
-  private getSurroundingChunks(position: Vector2): Collidable[] {
-    let yChunk = Math.floor(position.y / this.chunkSize);
-    let xChunk = Math.floor(position.x / this.chunkSize);
+  private getSurroundingCollidables(position: Vector2, height: number, width: number): Collidable[] {
+    const chunkYSpan = Math.ceil(height / this.chunkSize);
+    const chunkXSpan = Math.ceil(width / this.chunkSize);
+    const chunkXStart = Math.floor(position.x / this.chunkSize);
+    const chunkYStart = Math.floor(position.y / this.chunkSize);
+    const chunkXMin = Math.max(chunkXStart - 1, 0);
+    const chunkXMax = Math.min(chunkXStart + chunkXSpan + 1, this.chunkSize);
+    const chunkYMin = Math.max(chunkYStart - 1, 0);
+    const chunkYMax = Math.min(chunkYStart + chunkYSpan + 1, this.chunkSize);
 
-    let chunks = [];
-    for (let dy = -1; dy < 2; dy++) {
-      if (dy + yChunk < 0 || dy + yChunk >= this.collidableChunks.length) {
-        continue;
+    let collidables = [];
+    for(let y=chunkYMin;y<chunkYMax;y++){
+      for(let x=chunkXMin;x<chunkXMax;x++){
+        collidables.push(...this.collidableChunks[y][x].collidables);
       }
+    }
+    return collidables;
+  }
 
-      for (let dx = -1; dx < 2; dx++) {
-        if (dx + xChunk < 0 || dx + xChunk >= this.collidableChunks[dy + yChunk].length) {
-          continue;
-        }
+  private getChunks(position: Vector2, height: number, width: number): Chunk[] {
+    const chunkYSpan = Math.ceil(height / this.chunkSize);
+    const chunkXSpan = Math.ceil(width / this.chunkSize);
+    const chunkXStart = Math.floor(position.x / this.chunkSize);
+    const chunkYStart = Math.floor(position.y / this.chunkSize);
 
-        chunks.push(...this.collidableChunks[dy + yChunk][dx + xChunk]);
+    const chunks = [];
+
+    for(let dy=0;dy<chunkYSpan;dy++){
+      for(let dx=0;dx<chunkXSpan;dx++){
+        chunks.push(this.collidableChunks[dy + chunkYStart][dx + chunkXStart]);
       }
     }
 
     return chunks;
   }
 
-  private getChunk(position: Vector2): Collidable[] {
-    console.log(position)
-    let yChunk = Math.floor(position.y / this.chunkSize);
-    let xChunk = Math.floor(position.x / this.chunkSize);
-    console.log(yChunk, xChunk);
-
-    return this.collidableChunks[yChunk][xChunk];
-  }
-
   private removeFromChunk(collidable: Collidable, oldPosition: Vector2) {
-    let yChunk = Math.floor(oldPosition.y / this.chunkSize);
-    let xChunk = Math.floor(oldPosition.x / this.chunkSize);
-
-    this.collidableChunks[yChunk][xChunk] = this.collidableChunks[yChunk][xChunk].filter(it => it.id !== collidable.id);
+    const chunks = this.getChunks(oldPosition, collidable.getSquare().height, collidable.getSquare().width);
+    chunks.forEach(chunk => chunk.collidables = chunk.collidables.filter(it => it.id !== collidable.id));
   }
 
   unsubscribe(collidable: Collidable) {
     this.collidables[collidable.id] = null;
   }
+}
+
+class Chunk {
+  collidables: Collidable[] = [];
 }

@@ -4,6 +4,7 @@ import { CollisionService } from '../services/collision.service';
 import { CollisionEvent, Side } from '../model/CollisionEvent';
 import { Vector2Clamp } from '../model/Vector2Clamp';
 import { Vector2 } from '../model/Vector2';
+import { OptionsService } from '../services/options.service';
 
 @Component({
   selector: 'app-controlled-entity',
@@ -21,8 +22,8 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
 
   private keyCount = 0;
 
-  constructor(protected collisionService: CollisionService) { 
-    super(collisionService);
+  constructor(protected collisionService: CollisionService, protected optionsService: OptionsService) { 
+    super(collisionService, optionsService);
 
     this.move = this.move.bind(this)
     this.handleMove = this.handleMove.bind(this);

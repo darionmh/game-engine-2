@@ -1,5 +1,5 @@
-<div class="window" [style.width]="width+'px'" [style.height]="height+'px'">
-    <app-controlled-entity [windowWidth]="width" [windowHeight]="height" [x]="10" [y]="10"></app-controlled-entity>
+<div class="window" [style.width]="optionsService.windowWidth+'px'" [style.height]="optionsService.windowHeight+'px'">
+    <app-controlled-entity [x]="10" [y]="10" [width]="100" [height]="100"></app-controlled-entity>
     <app-entity [x]="100" [y]="50"></app-entity>
     <app-static-entity [x]="300" [y]="100"></app-static-entity>
     <app-static-entity [x]="250" [y]="100"></app-static-entity>
@@ -10,8 +10,8 @@
 
 
 
-    <!-- <app-static-entity [x]="0" [y]="0" [height]="700" [width]="50"></app-static-entity>
+    <app-static-entity [x]="0" [y]="0" [height]="700" [width]="50"></app-static-entity>
     <app-static-entity [x]="650" [y]="0" [height]="700" [width]="50"></app-static-entity>
     <app-static-entity [x]="50" [y]="0" [height]="50" [width]="600"></app-static-entity>
-    <app-static-entity [x]="50" [y]="650" [height]="50" [width]="600"></app-static-entity> -->
+    <app-static-entity [x]="50" [y]="650" [height]="50" [width]="600"></app-static-entity>
 </div>

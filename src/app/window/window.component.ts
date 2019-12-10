@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { OptionsService } from '../services/options.service';
 
 @Component({
   selector: 'app-window',
@@ -6,11 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./window.component.scss']
 })
 export class WindowComponent implements OnInit {
-
-  public height = 700;
-  public width = 700;
-
-  constructor() { }
+  constructor(public optionsService: OptionsService) { }
 
   ngOnInit() {
   }
