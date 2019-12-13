@@ -37,30 +37,31 @@ export class CollisionService {
   }
 
   public checkForCollision(curr: Collidable, sides: Side[], exclude: Collidable = null): boolean {
-    console.log("Checking", curr)
+    // console.log("Checking", curr)
     const currSquare = curr.getSquare();
     let collisionCount = 0;
 
     const surroundingChunks = this.getSurroundingCollidables(curr.getPosition(), curr.getSquare().height, curr.getSquare().width);
-    console.log("surrounding", surroundingChunks)
+    // console.log("surrounding", surroundingChunks)
     const stagedCollisions = [];
     for (const other of surroundingChunks) {
-      console.log('looing at ', other)
+      // console.log('looing at ', other)
       if (other === null || other === curr || other === exclude) {
         continue;
       }
       const otherSquare = other.getSquare();
-      const touchingSide: Side = currSquare.touches(otherSquare);
+      const touchingSide: Side = currSquare.touchV2(otherSquare);
       const isColliding = curr.isColliding(other);
+      // console.log(currSquare, otherSquare, currSquare.distanceFrom(otherSquare));
 
       if (touchingSide !== null && sides.includes(touchingSide)) {
-        console.log('collided', other)
+        // console.log('collided', other)
         stagedCollisions.push(() => other.onCollision({ side: touchingSide, collidedWith: curr }))
         collisionCount++;
       }
 
       if (touchingSide !== null && sides.includes(touchingSide) && !isColliding) {
-        console.log('collided', other)
+        // console.log('collided', other)
         curr.beginCollision({ side: touchingSide, collidedWith: other })
         // other.beginCollision({ side, collidedWith: curr })
         collisionCount++;
@@ -75,7 +76,7 @@ export class CollisionService {
 
   public subscribe(collidable: Collidable): () => void {
     this.collidables[collidable.id] = collidable;
-    console.log(collidable)
+    // console.log(collidable)
     // this.getChunk(collidable.getPosition()).collidables.push(collidable);
 
     this.getChunks(collidable.getPosition(), collidable.getSquare().height, collidable.getSquare().width).forEach(it => it.collidables.push(collidable));
@@ -115,9 +116,15 @@ export class CollisionService {
 
     const chunks = [];
 
-    for(let dy=0;dy<chunkYSpan;dy++){
-      for(let dx=0;dx<chunkXSpan;dx++){
-        chunks.push(this.collidableChunks[dy + chunkYStart][dx + chunkXStart]);
+    console.log(position);
+
+    for(let dy=chunkYStart;dy<chunkYSpan;dy++){
+      if(this.collidableChunks && dy < this.collidableChunks.length){
+        for(let dx=chunkXStart;dx<chunkXSpan;dx++){
+          if(this.collidableChunks[dy] && dx < this.collidableChunks[dy].length){
+            chunks.push(this.collidableChunks[dy][dx]);
+          }
+        } 
       }
     }
 

@@ -3,8 +3,8 @@ export class Range {
     public max: number;
 
     constructor(min: number, max: number){
-        this.min = min;
-        this.max = max;
+        this.min = Math.floor(min);
+        this.max = Math.ceil(max);
     }
 
     contains(other: number, inclusive: boolean): boolean {

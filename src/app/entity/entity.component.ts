@@ -38,6 +38,8 @@ export class EntityComponent implements OnInit, Collidable {
   public activeCollisions: Collision[] = [];
   protected renderTimeout = null;
   private speed = 1;
+  private maxSpeedX = 1;
+  private maxSpeedY = 1;
 
   constructor(protected collisionService: CollisionService, protected optionsService: OptionsService) {
     this.windowWidth = optionsService.windowWidth;
@@ -46,6 +48,7 @@ export class EntityComponent implements OnInit, Collidable {
     this.draw = this.draw.bind(this)
     this.adjustPosition = this.adjustPosition.bind(this)
     this.move = this.move.bind(this);
+    this.updateMaxSpeeds = this.updateMaxSpeeds.bind(this);
   }
 
   ngOnInit() {
@@ -66,16 +69,29 @@ export class EntityComponent implements OnInit, Collidable {
   }
 
   adjustVelocity(x: number, y: number) {
+    const xSign = x > 0 ? 1 : x < 0 ? -1 : 1;
+    const ySign = y > 0 ? 1 : y < 0 ? -1 : 1;
+
+    if(this.maxSpeedX != this.speed){
+      x = -this.maxSpeedX;
+    }
+
+    if(this.maxSpeedY != this.speed){
+      y = -this.maxSpeedY;
+    }
+
     this.velocity.x = x;
     this.velocity.y = y;
+    console.log("adjusting", this.velocity, this.maxSpeedX, this.maxSpeedY);
   }
 
   adjustPosition() {
-    this.position = Vector2.ClampVector(Vector2.AddVectors(this.position, this.velocity), this.windowWidth - this.width, this.windowHeight - this.height);
+    this.position = Vector2.AddVectors(this.position, this.velocity);
   }
 
   move(x: number, y: number, callback: () => void) {
     let blockedSides = this.getBlockedSides(new Vector2(x,y).toSides());
+    this.updateMaxSpeeds();
 
     if (blockedSides.includes(Side.TOP) && y < 0) y = 0;
     if (blockedSides.includes(Side.BOTTOM) && y > 0) y = 0;
@@ -117,7 +133,6 @@ export class EntityComponent implements OnInit, Collidable {
     if (this.isStatic) {
       //no op
     } else {
-      console.log('collision')
       const velocity = collision.collidedWith.getVelocityVector().restrictToSide(collision.side).blockSides(collision.collidedWith.getBlockedSides([collision.side]));
       this.tempVelocity = velocity;
       if(!this.collisionService.checkForCollision(this, [collision.side], collision.collidedWith)){
@@ -162,6 +177,24 @@ export class EntityComponent implements OnInit, Collidable {
     })
 
     return blockedSides;
+  }
+
+  updateMaxSpeeds(){
+    const squares = this.activeCollisions.map(it => it.collidedWith.getSquare());
+    let x = this.speed;
+    let y = this.speed;
+
+    squares.forEach(it => {
+      const dist = this.getSquare().actualDistanceFrom(it);
+      if(dist.x < x){
+        x = dist.x;
+      }
+      if(dist.y < y){
+        y = dist.y;
+      }  
+    });
+    this.maxSpeedX = x;
+    this.maxSpeedY = y;
   }
 
   getPosition(): Vector2 {

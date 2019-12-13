@@ -86,6 +86,16 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
         sides.push(Side.TOP);
       }
 
+      if(x !== 0 && y !== 0){
+        const absX = Math.abs(x);
+        const absY = Math.abs(y);
+
+        x = Math.sqrt(1/2) * absX / x;
+        y = Math.sqrt(1/2) * absY / y;
+
+        console.log(x, y);
+      }
+
       this.tempVelocity = new Vector2(x, y);
 
       if(!this.collisionService.checkForCollision(this, sides)){
@@ -94,6 +104,7 @@ export class ControlledEntityComponent extends EntityComponent implements OnInit
       
       this.move(x, y, this.handleMove);
       this.draw();
+      // requestAnimationFrame(this.draw);
     }
   }
 
