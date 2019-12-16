@@ -12,6 +12,7 @@ export interface Collidable {
     beginCollision(collision: Collision): void;
     isColliding(collidable: Collidable): boolean;
     endCollision(collidable: Collidable): void;
+    didCollide(side: Side): void;
     getSquare(): Square;
     getVelocityVector(): Vector2;
     getEntity(): EntityComponent;

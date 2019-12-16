@@ -20,4 +20,9 @@ export class StaticEntityComponent extends EntityComponent implements OnInit {
   ngOnInit() {
     super.ngOnInit();
   }
+
+  // onCollision(collision: Collision){
+  //   console.log("static collision");
+  //   collision.collidedWith.onCollision({...collision, collidedWith: this});
+  // }
 }

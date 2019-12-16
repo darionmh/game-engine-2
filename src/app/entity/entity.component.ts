@@ -70,8 +70,8 @@ export class EntityComponent implements OnInit, Collidable {
     this.velocity.y = y;
   }
 
-  adjustPosition() {
-    this.position = Vector2.ClampVector(Vector2.AddVectors(this.position, this.velocity), this.windowWidth - this.width, this.windowHeight - this.height);
+  adjustPosition(x: number, y: number) {
+    this.position = Vector2.ClampVector(Vector2.AddVectors(this.position, new Vector2(x, y)), this.windowWidth - this.width, this.windowHeight - this.height);
   }
 
   move(x: number, y: number, callback: () => void) {
@@ -84,8 +84,8 @@ export class EntityComponent implements OnInit, Collidable {
 
     const oldPosition = this.position;
 
-    this.adjustVelocity(x, y);
-    this.adjustPosition();
+    // this.adjustVelocity(x, y);
+    this.adjustPosition(x, y);
     this.collisionService.updateLocation(this, oldPosition);
 
     this.draw();
@@ -167,4 +167,6 @@ export class EntityComponent implements OnInit, Collidable {
   getPosition(): Vector2 {
     return this.position;
   }
+
+  didCollide(side: Side){}
 }

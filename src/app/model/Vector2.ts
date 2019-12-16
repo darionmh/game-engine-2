@@ -77,4 +77,15 @@ export class Vector2 {
         }
         return this;
     }
+
+    applySide(side: Side): Vector2 {
+        if([Side.TOP, Side.BOTTOM].includes(side)){
+            this.y = -this.y;
+        }
+        if([Side.LEFT, Side.RIGHT].includes(side)){
+            this.x = -this.x;
+        }
+
+        return this;
+    }
 }

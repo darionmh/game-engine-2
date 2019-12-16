@@ -37,30 +37,30 @@ export class CollisionService {
   }
 
   public checkForCollision(curr: Collidable, sides: Side[], exclude: Collidable = null): boolean {
-    console.log("Checking", curr)
     const currSquare = curr.getSquare();
     let collisionCount = 0;
 
     const surroundingChunks = this.getSurroundingCollidables(curr.getPosition(), curr.getSquare().height, curr.getSquare().width);
-    console.log("surrounding", surroundingChunks)
     const stagedCollisions = [];
+    
+
     for (const other of surroundingChunks) {
-      console.log('looing at ', other)
+      
       if (other === null || other === curr || other === exclude) {
         continue;
       }
+
       const otherSquare = other.getSquare();
       const touchingSide: Side = currSquare.touches(otherSquare);
       const isColliding = curr.isColliding(other);
-
       if (touchingSide !== null && sides.includes(touchingSide)) {
-        console.log('collided', other)
+        // curr.onCollision({side: touchingSide, collidedWith: other});
+        curr.didCollide(touchingSide);
         stagedCollisions.push(() => other.onCollision({ side: touchingSide, collidedWith: curr }))
         collisionCount++;
       }
 
       if (touchingSide !== null && sides.includes(touchingSide) && !isColliding) {
-        console.log('collided', other)
         curr.beginCollision({ side: touchingSide, collidedWith: other })
         // other.beginCollision({ side, collidedWith: curr })
         collisionCount++;
@@ -75,7 +75,7 @@ export class CollisionService {
 
   public subscribe(collidable: Collidable): () => void {
     this.collidables[collidable.id] = collidable;
-    console.log(collidable)
+    
     // this.getChunk(collidable.getPosition()).collidables.push(collidable);
 
     this.getChunks(collidable.getPosition(), collidable.getSquare().height, collidable.getSquare().width).forEach(it => it.collidables.push(collidable));
@@ -101,7 +101,13 @@ export class CollisionService {
     let collidables = [];
     for(let y=chunkYMin;y<chunkYMax;y++){
       for(let x=chunkXMin;x<chunkXMax;x++){
-        collidables.push(...this.collidableChunks[y][x].collidables);
+        if(this.collidableChunks[y] && this.collidableChunks[y][x]){
+        for(let c of this.collidableChunks[y][x].collidables){
+          if(!collidables.includes(c)){
+            collidables.push(c);
+          }
+        }
+      }
       }
     }
     return collidables;
